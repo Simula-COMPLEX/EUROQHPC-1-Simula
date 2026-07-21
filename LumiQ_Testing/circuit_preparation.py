@@ -1,6 +1,8 @@
 import random
+from math import floor
 
-from qiskit import QuantumCircuit
+from qiskit import QuantumCircuit, qasm2
+from qiskit.circuit.random import random_circuit
 
 
 def create_binary(qubitnum, num_array):
@@ -22,7 +24,7 @@ def create_binary(qubitnum, num_array):
 
     return inputs[1:len(inputs)]
 
-def circuititialization(numqubits, input):
+def circuitinitialization_classic(numqubits, input):
     qc = QuantumCircuit(numqubits)
     x = 0
     for bit in input:
@@ -31,82 +33,60 @@ def circuititialization(numqubits, input):
         x = x + 1
 
     return qc
+
+def circuitinitialization_quantum(numqubits):
+    qc = QuantumCircuit(numqubits)
+
+
+    return qc
+
 def createInputs(num_qubits, input_types, num_inputs):
+    num_inputs = floor(num_inputs / len(input_types))
     inputs = {}
 
-    if 'C' in input_types and 'Q' in input_types:
-        c_inputs = {}
-        if num_inputs/2 >= 2 ** num_qubits:
+    input_circuits = {}
+    if 'C' in input_types:
+        if num_inputs >= 2**num_qubits:
             c_input_ints = range(0, 2 ** num_qubits)
         else:
-            c_input_ints = random.sample(range(0, 2 ** num_qubits), k=num_inputs/2)
+            c_input_ints = random.sample(range(0, 2 ** num_qubits), k=num_inputs)
 
         inputs_bin = create_binary(num_qubits, c_input_ints)
 
         for i, bin in enumerate(inputs_bin):
-            new_qc = circuititialization(num_qubits, bin)
-            inputs["ClassicInput_"+str(i)] = bin
-            c_inputs["ClassicInput_"+str(i)]=new_qc
+            new_qc = circuitinitialization_classic(num_qubits, bin)
+            inputs["ClassicInput_" + str(i)] = bin
+            input_circuits["ClassicInput_" + str(i)] = new_qc
 
-        # q_inputs = []
-        # mutator = UCNOTMutator()
-        # circuit = Circuit(num_qubits)
-        # for i in range(num_inputs / 2):
-        #     q_input = mutator.generate_circuit(circuit)
-        #     q_input_qasm = q_input.code.qasm()
-        #     q_input_circ = QuantumCircuit.from_qasm_str(q_input_qasm)
-        #     q_inputs.append(q_input_circ)
+    if 'Q' in input_types:
+        for i in range(num_inputs):
+            new_qc = random_circuit(num_qubits=num_qubits, depth=2, measure=False)
+            inputs["QuantumInput_" + str(i)] = qasm2.dumps(new_qc)
+            input_circuits["QuantumInput_" + str(i)] = new_qc
 
-    else:
-        if 'C' in input_types:
-            c_inputs = {}
-            if num_inputs >= 2**num_qubits:
-                c_input_ints = range(0, 2 ** num_qubits)
-            else:
-                c_input_ints = random.sample(range(0, 2 ** num_qubits), k=num_inputs)
-
-            inputs_bin = create_binary(num_qubits, c_input_ints)
-
-            for i, bin in enumerate(inputs_bin):
-                new_qc = circuititialization(num_qubits, bin)
-                inputs["ClassicInput_" + str(i)] = bin
-                c_inputs["ClassicInput_"+str(i)] = new_qc
-
-        # else:
-        #     q_inputs = []
-        #     mutator = UCNOTMutator()
-        #     circuit = Circuit(num_qubits)
-        #     for i in range(num_inputs):
-        #         q_input = mutator.generate_circuit(circuit)
-        #         q_input_qasm = q_input.code.qasm()
-        #         q_input_circ = QuantumCircuit.from_qasm_str(q_input_qasm)
-        #         q_inputs.append(q_input_circ)
-
-
-    input_circuits = c_inputs # | q_inputs
 
     return input_circuits, inputs
 
 def addMeasurements(qc, base, output_type):
     new_qc = QuantumCircuit(qc.num_qubits)
-    new_qc.compose(qc.copy())
+    composed_qc = new_qc.compose(qc.copy())
 
     if base == 'X':
         # qc.barrier()
-        for qubit in new_qc.qubits:
-            new_qc.h(qubit)
+        for qubit in composed_qc.qubits:
+            composed_qc.h(qubit)
     elif base == 'Y':
         # qc.barrier()
-        for qubit in new_qc.qubits:
-            new_qc.sdg(qubit)
-            new_qc.h(qubit)
+        for qubit in composed_qc.qubits:
+            composed_qc.sdg(qubit)
+            composed_qc.h(qubit)
 
     if output_type == "State":
-        new_qc.save_statevector()
+        composed_qc.save_statevector()
     else:
-        new_qc.measure_all()
+        composed_qc.measure_all()
 
-    return new_qc
+    return composed_qc
 
 def initCircuits(qc, input_circuits):
     initialized_qcs = {}
@@ -127,7 +107,7 @@ def prepare_circuits(qc, input_types, num_inputs, bases, output_type):
     for input_name, circ in initialized_circuits.items():
         for base in bases:
             circuits["TestCase_" + str(test_count)] = addMeasurements(circ, base, output_type)
-            tests["TestCase_" + str(test_count)] = inputs[input_name] + base
+            tests["TestCase_" + str(test_count)] = inputs[input_name] + '_Base_' + base
             test_count = test_count + 1
 
 
