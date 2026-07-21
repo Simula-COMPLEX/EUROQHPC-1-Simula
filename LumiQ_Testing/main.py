@@ -1,3 +1,6 @@
+import pandas as pd
+import pathlib
+
 from qiskit import QuantumCircuit
 
 from circuit_preparation import prepare_circuits
@@ -11,8 +14,35 @@ def run(origin_qc, input_types,num_inputs, measurements, output_type, shots, env
     results = get_outputs(circuits, outputs, output_type)
 
 
-    print(results)
-    print(tests)
+    return results, tests
+
+
+def save_results(results, tests, results_path, origin_file):
+    test_names = list(results.keys())
+    result = list(results.values())
+
+    # Create a DataFrame with one column for keys and one for values
+    df_results = pd.DataFrame({
+        "TestCase": test_names,
+        "Result": result
+    })
+
+    test_names = list(tests.keys())
+    tests = list(tests.values())
+
+    # Create a DataFrame with one column for keys and one for values
+    df_tests = pd.DataFrame({
+        "TestName": test_names,
+        "Test": tests
+    })
+
+    # Save to CSV
+    path = pathlib.Path(origin_file)
+    origin_file_name = path.stem
+    pathlib.Path(f'{results_path}{path_char}{origin_file_name}').mkdir(parents=True, exist_ok=True)
+    df_results.to_csv(f"{results_path}{path_char}{origin_file_name}{path_char}execution_results.csv", index=False)
+    df_tests.to_csv(f"{results_path}{path_char}{origin_file_name}{path_char}tests_used.csv", index=False)
+
 
 def start():
     origin_file = r"data\example_qc\ae_indep_qiskit_2.qasm"
@@ -22,14 +52,22 @@ def start():
     num_inputs = 2 #Number of possible inputs
     measurements = ['X', 'Y', 'Z'] #['X','Y','Z']
 
-    output_type = 'State' #['Prob', 'Exp', 'State']
+    output_type = 'Prob' #['Prob', 'Exp', 'State']
     shots = 1024
     environment = 'Sim' #['Sim', 'Real']
 
+    save = True
+    results_path = r"data\results"
 
-    run(origin_qc, input_types, num_inputs, measurements, output_type, shots, environment)
+    results, tests = run(origin_qc, input_types, num_inputs, measurements, output_type, shots, environment)
+
+    if save:
+        save_results(results, tests, results_path, origin_file)
+
 
 
 if __name__ == '__main__':
+    path_char = '\\'
+
     start()
 
