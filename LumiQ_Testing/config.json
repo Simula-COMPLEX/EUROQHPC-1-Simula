@@ -1,0 +1,15 @@
+{
+    "input_types": ["C", "Q"],
+    "num_inputs": 2,
+    "measurements": ["X", "Y", "Z"],
+
+    "output_type": "Prob",
+    "shots": 1024,
+    "environment": "Sim",
+
+    "save": true,
+    "verbose": true,
+
+    "results_path": "data/results",
+    "origin_path": "data/example_qc"
+}

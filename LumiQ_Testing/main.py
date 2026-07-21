@@ -1,7 +1,11 @@
+from types import SimpleNamespace
+
 import pandas as pd
 import pathlib
+import json
 
 from qiskit import QuantumCircuit
+from tqdm import tqdm
 
 from circuit_preparation import prepare_circuits
 from circuit_execution import execute_circuits, get_outputs
@@ -10,7 +14,7 @@ from circuit_execution import execute_circuits, get_outputs
 def run(origin_qc, input_types,num_inputs, measurements, output_type, shots, environment):
     
     circuits, tests = prepare_circuits(origin_qc, input_types, num_inputs, measurements, output_type)
-    outputs = execute_circuits(circuits, shots, environment)
+    outputs = execute_circuits(circuits, shots, environment, output_type)
     results = get_outputs(circuits, outputs, output_type)
 
 
@@ -28,13 +32,20 @@ def save_results(results, tests, results_path, origin_file):
     })
 
     test_names = list(tests.keys())
-    tests = list(tests.values())
+    test_content = list(tests.values())
 
     # Create a DataFrame with one column for keys and one for values
     df_tests = pd.DataFrame({
         "TestName": test_names,
-        "Test": tests
+        "Test": test_content
     })
+
+    # Split Test column into two columns
+    df_tests[["Input", "Measurement_Base"]] = df_tests["Test"].str.split("_Base_", expand=True)
+    df_tests["Input"] = df_tests["Input"].str.replace("\n", "\\n")
+
+    # Remove original column if no longer needed
+    df_tests = df_tests.drop(columns=["Test"])
 
     # Save to CSV
     path = pathlib.Path(origin_file)
@@ -44,39 +55,48 @@ def save_results(results, tests, results_path, origin_file):
     df_tests.to_csv(f"{results_path}{path_char}{origin_file_name}{path_char}tests_used.csv", index=False)
 
 
+
 def start():
-    origin_file = r"data\example_qc\ghz_indep_qiskit_2.qasm"
-    origin_qc = QuantumCircuit.from_qasm_file(origin_file)
+    with open("config.json", "r") as f:
+        config = json.load(f, object_hook=lambda d: SimpleNamespace(**d))
 
-    input_types = ['C', 'Q'] #['C', 'Q']
-    num_inputs = 4 #Number of possible inputs
-    measurements = ['X', 'Y', 'Z'] #['X','Y','Z']
 
-    output_type = 'Prob' #['Prob', 'Exp', 'State']
-    shots = 1024
-    environment = 'Sim' #['Sim', 'Real']
+    path = pathlib.Path(config.origin_path)
 
-    save = False
-    verbose = True
-    results_path = r"data\results"
 
-    if verbose:
-        print("--------------------------------------------------------------------")
-        print(f"Executing {origin_file}")
-        print("--------------------------------------------------------------------")
-    results, tests = run(origin_qc, input_types, num_inputs, measurements, output_type, shots, environment)
+    files = []
+    if path.is_file():
+        # Process the single file
+        if path.suffix == ".qasm":
+            files.append(path)
 
-    if verbose:
-        print("--------------------------------------------------------------------")
-        print(f"TC used in execution:")
-        print(tests)
-        print("--------------------------------------------------------------------")
-        print(f"Results obtained from execution:")
-        print(results)
-        print("--------------------------------------------------------------------")
+    elif path.is_dir():
+        # Iterate over all .qasm files in the folder
+        for file in path.glob("*.qasm"):
+            files.append(file)
 
-    if save:
-        save_results(results, tests, results_path, origin_file)
+    else:
+        print("ERROR: Path does not exist or no .qasm file was found.")
+
+    for origin_file in tqdm(files, desc="Executing .qasm files...."):
+        origin_qc = QuantumCircuit.from_qasm_file(origin_file)
+        if config.verbose:
+            print("--------------------------------------------------------------------")
+            print(f"Executing {origin_file}")
+            print("--------------------------------------------------------------------")
+        results, tests = run(origin_qc, config.input_types, config.num_inputs, config.measurements, config.output_type, config.shots, config.environment)
+
+        if config.verbose:
+            print("--------------------------------------------------------------------")
+            print(f"TC used in execution:")
+            print(tests)
+            print("--------------------------------------------------------------------")
+            print(f"Results obtained from execution:")
+            print(results)
+            print("--------------------------------------------------------------------")
+
+        if config.save:
+            save_results(results, tests, config.results_path, origin_file)
 
 
 

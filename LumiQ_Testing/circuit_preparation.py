@@ -61,7 +61,7 @@ def createInputs(num_qubits, input_types, num_inputs):
     if 'Q' in input_types:
         for i in range(num_inputs):
             new_qc = random_circuit(num_qubits=num_qubits, depth=2, measure=False)
-            inputs["QuantumInput_" + str(i)] = qasm2.dumps(new_qc)
+            inputs["QuantumInput_" + str(i)] = str(qasm2.dumps(new_qc))
             input_circuits["QuantumInput_" + str(i)] = new_qc
 
 
@@ -83,7 +83,7 @@ def addMeasurements(qc, base, output_type):
 
     if output_type == "State":
         composed_qc.save_statevector()
-    else:
+    if output_type == "Prob":
         composed_qc.measure_all()
 
     return composed_qc
