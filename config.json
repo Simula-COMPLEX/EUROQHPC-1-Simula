@@ -1,6 +1,6 @@
 {
     "input_types": ["C", "Q"],
-    "num_inputs": 2,
+    "num_inputs": 4,
     "measurements": ["X", "Y", "Z"],
 
     "output_type": "Prob",
@@ -11,5 +11,8 @@
     "verbose": true,
 
     "results_path": "data/results",
-    "origin_path": "data/example_qc"
+    "origin_path": "data/example_qc",
+
+    "PROJECT": "PROJECT id",
+    "RESOURCE": "RESOURCE id"
 }

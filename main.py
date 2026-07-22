@@ -10,12 +10,17 @@ from tqdm import tqdm
 from circuit_preparation import prepare_circuits
 from circuit_execution import execute_circuits, get_outputs
 
+from py4lexis.session import LexisSession
 
-def run(origin_qc, input_types,num_inputs, measurements, output_type, shots, environment):
+
+def run(origin_qc, input_types,num_inputs, measurements, output_type, shots, environment, token, project, resource):
     
     circuits, tests = prepare_circuits(origin_qc, input_types, num_inputs, measurements, output_type)
-    outputs = execute_circuits(circuits, shots, environment, output_type)
-    results = get_outputs(circuits, outputs, output_type)
+    outputs = execute_circuits(circuits, shots, environment, output_type, token, project, resource)
+    if environment == 'Sim':
+        results = get_outputs(circuits, outputs, output_type)
+    else:
+        results = outputs
 
 
     return results, tests
@@ -60,6 +65,14 @@ def start():
     with open("config.json", "r") as f:
         config = json.load(f, object_hook=lambda d: SimpleNamespace(**d))
 
+    if config.environment == 'VLQ':
+        config.output_type = 'Prob'
+        # Authentication
+        lexis_session = LexisSession()
+        token = lexis_session.get_access_token()
+    else:
+        token = None
+
 
     path = pathlib.Path(config.origin_path)
 
@@ -84,7 +97,7 @@ def start():
             print("--------------------------------------------------------------------")
             print(f"Executing {origin_file}")
             print("--------------------------------------------------------------------")
-        results, tests = run(origin_qc, config.input_types, config.num_inputs, config.measurements, config.output_type, config.shots, config.environment)
+        results, tests = run(origin_qc, config.input_types, config.num_inputs, config.measurements, config.output_type, config.shots, config.environment, token, config.PROJECT, config.RESOURCE)
 
         if config.verbose:
             print("--------------------------------------------------------------------")

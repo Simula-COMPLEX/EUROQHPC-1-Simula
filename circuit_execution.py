@@ -1,3 +1,6 @@
+from qaas.client import QProvider, QBackend, QJob
+from iqm.qiskit_iqm import  transpile_to_IQM
+
 
 from qiskit import transpile
 
@@ -5,7 +8,7 @@ from qiskit_aer import AerSimulator
 from qiskit.quantum_info import SparsePauliOp
 from qiskit.primitives import StatevectorEstimator
 
-def execute_circuits(circuits, shots, environment, output_type):
+def execute_circuits(circuits, shots, environment, output_type, token, project, resource):
     if environment == 'Sim':
         if output_type == 'Exp':
             results = {}
@@ -21,11 +24,17 @@ def execute_circuits(circuits, shots, environment, output_type):
                 results[tc_name] = float(result)
         else:
             backend = AerSimulator(method='statevector')
-            new_circuits = transpile(list(circuits.values()), backend)
-            results = backend.run(new_circuits, shots=shots, seed_simulator=42).result()
+            transpiled_circuits = transpile(list(circuits.values()), backend)
+            results = backend.run(transpiled_circuits, shots=shots, seed_simulator=42).result()
 
     elif environment == 'VLQ':
-        pass
+        results = {}
+        provider = QProvider(token, project)
+        backend: QBackend = provider.get_backend(resource)
+        # Transpile circuit
+        for name, circuit in circuits.items():
+            transpiled_circuit = transpile_to_IQM(circuit, backend)
+            results[name] = backend.run(transpiled_circuit, shots=shots).result().get_counts()
 
     return results
 
