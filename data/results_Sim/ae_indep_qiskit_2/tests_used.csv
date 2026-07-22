@@ -1,0 +1,25 @@
+TestName,Input,Measurement_Base
+TestCase_0,00,X
+TestCase_1,00,Y
+TestCase_2,00,Z
+TestCase_3,01,X
+TestCase_4,01,Y
+TestCase_5,01,Z
+TestCase_6,10,X
+TestCase_7,10,Y
+TestCase_8,10,Z
+TestCase_9,11,X
+TestCase_10,11,Y
+TestCase_11,11,Z
+TestCase_12,"OPENQASM 2.0;\ninclude ""qelib1.inc"";\nqreg q[2];\nu1(6.153835395476738) q[0];\ncx q[0],q[1];",X
+TestCase_13,"OPENQASM 2.0;\ninclude ""qelib1.inc"";\nqreg q[2];\nu1(6.153835395476738) q[0];\ncx q[0],q[1];",Y
+TestCase_14,"OPENQASM 2.0;\ninclude ""qelib1.inc"";\nqreg q[2];\nu1(6.153835395476738) q[0];\ncx q[0],q[1];",Z
+TestCase_15,"OPENQASM 2.0;\ninclude ""qelib1.inc"";\nqreg q[2];\nu(5.640813945882725,5.966459212331368,6.205717108157364) q[0];\nh q[1];\nh q[0];\nrz(1.3857384910506514) q[1];",X
+TestCase_16,"OPENQASM 2.0;\ninclude ""qelib1.inc"";\nqreg q[2];\nu(5.640813945882725,5.966459212331368,6.205717108157364) q[0];\nh q[1];\nh q[0];\nrz(1.3857384910506514) q[1];",Y
+TestCase_17,"OPENQASM 2.0;\ninclude ""qelib1.inc"";\nqreg q[2];\nu(5.640813945882725,5.966459212331368,6.205717108157364) q[0];\nh q[1];\nh q[0];\nrz(1.3857384910506514) q[1];",Z
+TestCase_18,"OPENQASM 2.0;\ninclude ""qelib1.inc"";\nqreg q[2];\ncx q[0],q[1];\nrz(2.0838132815379713) q[1];\np(5.5083708060385055) q[0];",X
+TestCase_19,"OPENQASM 2.0;\ninclude ""qelib1.inc"";\nqreg q[2];\ncx q[0],q[1];\nrz(2.0838132815379713) q[1];\np(5.5083708060385055) q[0];",Y
+TestCase_20,"OPENQASM 2.0;\ninclude ""qelib1.inc"";\nqreg q[2];\ncx q[0],q[1];\nrz(2.0838132815379713) q[1];\np(5.5083708060385055) q[0];",Z
+TestCase_21,"OPENQASM 2.0;\ninclude ""qelib1.inc"";\nqreg q[2];\nry(0.6201084641036216) q[0];\nsxdg q[1];\ntdg q[0];\nu2(5.214555285502094,2.474576096509521) q[1];",X
+TestCase_22,"OPENQASM 2.0;\ninclude ""qelib1.inc"";\nqreg q[2];\nry(0.6201084641036216) q[0];\nsxdg q[1];\ntdg q[0];\nu2(5.214555285502094,2.474576096509521) q[1];",Y
+TestCase_23,"OPENQASM 2.0;\ninclude ""qelib1.inc"";\nqreg q[2];\nry(0.6201084641036216) q[0];\nsxdg q[1];\ntdg q[0];\nu2(5.214555285502094,2.474576096509521) q[1];",Z
