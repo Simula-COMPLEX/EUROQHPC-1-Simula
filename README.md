@@ -20,9 +20,9 @@ As the LUMI-Q project progresses, the repository will evolve to include addition
 
 # Framework Overview
 
-The repository currently provides a modular framework for executing and testing quantum circuits in a **simulated environment**.
+The repository currently provides a modular framework for executing and testing quantum circuits in a **simulated environment** or the real **VLQ** Quantum Computer.
 
-Users only need to provide an OpenQASM (`.qasm`) circuit, while the framework manages circuit preparation, execution, and output collection. The architecture has been designed to facilitate future integration with the **VLQ** quantum computer, enabling direct execution on quantum hardware once available.
+Users only need to provide an OpenQASM (`.qasm`) circuit, while the framework manages circuit preparation, execution, and output collection. The architecture has been designed to facilitate integration with the **VLQ** quantum computer, enabling direct execution on quantum hardware.
 
 The following figure illustrates the execution workflow of the framework, from loading an OpenQASM circuit to generating and storing the execution results.
 
@@ -34,7 +34,7 @@ The following figure illustrates the execution workflow of the framework, from l
 
 - Execution of quantum circuits from OpenQASM (`.qasm`) files.
 - Simulation-based execution backend.
-- Modular execution layer designed for future integration with the VLQ quantum computer.
+- Integration with the VLQ quantum computer for real execution.
 
 ### Quantum Software Testing
 
@@ -53,6 +53,8 @@ Execution results can be retrieved as:
 - Probability distributions
 - State vectors
 - Expectation values
+
+Note that for the **VLQ** real quantum execution only probability distribution are available currently.
 
 # Repository Structure
 
@@ -79,7 +81,7 @@ Entry point of the framework. This script orchestrates the complete workflow by 
 
 Implements the quantum circuit execution backend. The module is responsible for loading and executing OpenQASM (`.qasm`) circuits and retrieving the selected output representation (probability distributions, state vectors, or expectation values).
 
-The current implementation targets a simulation backend. Future versions will extend this module to support direct execution on the **VLQ** quantum computer.
+The current implementation conatines a QiskitAer simulation backend and supports direct execution on the **VLQ** quantum computer.
 
 ### `circuit_preparation.py`
 
@@ -111,7 +113,10 @@ The framework is configured through the `config.json` file, which defines the te
     "verbose": true,
 
     "results_path": "data/results",
-    "origin_path": "data/example_qc"
+    "origin_path": "data/example_qc",
+
+    "PROJECT": "PROJECT id",
+    "RESOURCE": "RESOURCE id"
 }
 ```
 
@@ -129,6 +134,8 @@ The available configuration parameters are described below.
 | `verbose` | Enables detailed console output during execution for monitoring and debugging purposes. |
 | `results_path` | Directory where generated results and execution outputs are stored. |
 | `origin_path` | Directory containing the input OpenQASM (`.qasm`) circuits to be executed. |
+| `PROJECT` | The project id associated to the relevant project for the VLQ machine execution, e.g. OPEN-37-1 |
+| `RESOURCE` | The resource id associated to the relevant project for the VLQ machine execution, e.g. VLQ-CZ |
 
 ### Example
 
@@ -141,6 +148,8 @@ The configuration shown above will:
 - Save the generated results in `data/results`.
 - Read the input circuits from `data/example_qc`.
 
+For more information regarding the execution on the real **VLQ** Quantum COmputer please refer to [Documentation](https://docs.it4i.cz/en/docs/clusters/vlq/access)
+
 # Installation
 
 ### Requirements
@@ -151,22 +160,14 @@ The framework has been developed and tested with the following software versions
 |----------|---------|
 | Python | 3.11 |
 | NumPy | 2.4.6 |
-| Pandas | 3.0.3 |
-| Qiskit | 2.5.0 |
+| Pandas | 2.3.3 |
+| Qiskit | 1.4.5|
 | Qiskit Aer | 0.17.2 |
 | tqdm | 4.69.0 |
+| py4lexis | 7.0.6 |
+| qaas | 0.3.2 |
 
-Install the required dependencies using:
-
-```bash
-pip install numpy==2.4.6 \
-            pandas==3.0.3 \
-            qiskit==2.5.0 \
-            qiskit-aer==0.17.2 \
-            tqdm==4.69.0
-```
-
-Alternatively, the dependencies can be installed from a `requirements.txt` file:
+The dependencies can be installed from a `requirements.txt` file:
 
 ```bash
 pip install -r requirements.txt
@@ -197,7 +198,6 @@ During execution, the framework will:
 
 The repository is under active development. Planned future work includes:
 
-- Direct execution on the **VLQ** quantum computer.
 - Extension of the quantum software testing framework.
 - Additional testing methodologies and validation workflows.
 - Improved documentation and usage examples.
