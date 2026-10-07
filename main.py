@@ -15,6 +15,7 @@ from py4lexis.session import LexisSession
 import argparse
 from QOPS.Tester import Circuit_Tester
 from QOPS.QiskitExecutor import Qiskit_Executor
+from QOPS.VLQExecutor import VLQ_Executor
 
 #QuantumCircuit -> [Str] -> Int -> [Measurement_Basis] -> Str -> Int -> Str -> Str -> Str -> Str -> (Dict_Results, Dict_OpenQASM2)
 def run(origin_qc, input_types,num_inputs, measurements, output_type, shots, environment, token, project, resource):
@@ -104,7 +105,7 @@ def start(exec_qops):
                             cut = qasm2.load(f_ex) #circuit without measurements
                             with open(str(f_cps), "r") as f:
                                 cps = json.load(f) 
-                            executor = Qiskit_Executor()
+                            executor = Qiskit_Executor() if config.environment=="Sim" else VLQ_Executor()
                             path_folder_result = pathlib.Path(config.results_path + "_QOPS")
                             path_folder_result.mkdir(parents=True, exist_ok=True)
                             path_result = pathlib.Path(path_folder_result,str(f_ex.stem)+".json")
