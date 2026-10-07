@@ -8,6 +8,7 @@ from qiskit_aer import AerSimulator
 from qiskit.quantum_info import SparsePauliOp
 from qiskit.primitives import StatevectorEstimator
 
+#Dict_QuantumCircuit -> Int -> Str -> Str -> Str -> Str -> Str -> Dict_Results
 def execute_circuits(circuits, shots, environment, output_type, token, project, resource):
     if environment == 'Sim':
         if output_type == 'Exp':
@@ -38,6 +39,7 @@ def execute_circuits(circuits, shots, environment, output_type, token, project, 
 
     return results
 
+#Dict_QuantumCircuit -> Dict_Results -> Str -> Dict_Results
 def get_outputs(circuits, outputs, output_type):
     results = {}
     if output_type == 'State':

@@ -10,9 +10,17 @@
     "save": true,
     "verbose": true,
 
-    "results_path": "data/results",
-    "origin_path": "data/example_qc",
+    "results_path": "./data/results",
+    "origin_path": "./data/example_qc",
 
     "PROJECT": "PROJECT id",
-    "RESOURCE": "RESOURCE id"
+    "RESOURCE": "RESOURCE id",
+
+    "QOPS":{
+	"cps_path": "./data/cps",
+	"budget": 100,
+	"mode": "batch",
+	"batch": 10,
+	"threshold": 0.1
+    }
 }

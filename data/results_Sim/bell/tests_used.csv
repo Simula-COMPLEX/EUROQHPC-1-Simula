@@ -1,0 +1,13 @@
+TestName,Input,Measurement_Base
+TestCase_0,00,X
+TestCase_1,00,Y
+TestCase_2,00,Z
+TestCase_3,11,X
+TestCase_4,11,Y
+TestCase_5,11,Z
+TestCase_6,"OPENQASM 2.0;\ninclude ""qelib1.inc"";\nqreg q[2];\nu3(4.28836776985778,5.248371334458456,2.558408314935296) q[1];\ncy q[0],q[1];",X
+TestCase_7,"OPENQASM 2.0;\ninclude ""qelib1.inc"";\nqreg q[2];\nu3(4.28836776985778,5.248371334458456,2.558408314935296) q[1];\ncy q[0],q[1];",Y
+TestCase_8,"OPENQASM 2.0;\ninclude ""qelib1.inc"";\nqreg q[2];\nu3(4.28836776985778,5.248371334458456,2.558408314935296) q[1];\ncy q[0],q[1];",Z
+TestCase_9,"OPENQASM 2.0;\ninclude ""qelib1.inc"";\ngate ryy(param0) q0,q1 { rx(pi/2) q0; rx(pi/2) q1; cx q0,q1; rz(param0) q1; cx q0,q1; rx(-pi/2) q0; rx(-pi/2) q1; }\nqreg q[2];\nryy(0.8063134254242817) q[1],q[0];\ncrz(5.698115046841947) q[1],q[0];",X
+TestCase_10,"OPENQASM 2.0;\ninclude ""qelib1.inc"";\ngate ryy(param0) q0,q1 { rx(pi/2) q0; rx(pi/2) q1; cx q0,q1; rz(param0) q1; cx q0,q1; rx(-pi/2) q0; rx(-pi/2) q1; }\nqreg q[2];\nryy(0.8063134254242817) q[1],q[0];\ncrz(5.698115046841947) q[1],q[0];",Y
+TestCase_11,"OPENQASM 2.0;\ninclude ""qelib1.inc"";\ngate ryy(param0) q0,q1 { rx(pi/2) q0; rx(pi/2) q1; cx q0,q1; rz(param0) q1; cx q0,q1; rx(-pi/2) q0; rx(-pi/2) q1; }\nqreg q[2];\nryy(0.8063134254242817) q[1],q[0];\ncrz(5.698115046841947) q[1],q[0];",Z

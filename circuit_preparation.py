@@ -4,14 +4,14 @@ from math import floor
 from qiskit import QuantumCircuit, qasm2
 from qiskit.circuit.random import random_circuit
 
-
+#Int -> [Int] -> [QuantumState_str]
 def create_binary(qubitnum, num_array):
     inputs = ("",)
     # x = 0
     # while x < 2 ** qubitnum:
     for x in num_array:
-        binariInput = str(bin(x))
-        binariInput = binariInput[2:len(binariInput)]
+        binariInput = str(bin(x)) #bin(5) = "0b101"
+        binariInput = binariInput[2:len(binariInput)] # "0b101" -> "101"
         if len(binariInput) < qubitnum:
             y = len(binariInput)
             tmp = ""
@@ -20,10 +20,11 @@ def create_binary(qubitnum, num_array):
                 y = y + 1
             binariInput = tmp + binariInput
         inputs = inputs + (binariInput,)
-        x = x + 1
+        x = x + 1 #can be removed
 
-    return inputs[1:len(inputs)]
+    return inputs[1:len(inputs)] #drops the empty string created at the start
 
+#Int -> [QuantumState_str] -> QuantumCircuit
 def circuitinitialization_classic(numqubits, input):
     qc = QuantumCircuit(numqubits)
     x = 0
@@ -34,12 +35,14 @@ def circuitinitialization_classic(numqubits, input):
 
     return qc
 
+#Int -> QuantumCircuit
 def circuitinitialization_quantum(numqubits):
     qc = QuantumCircuit(numqubits)
 
 
     return qc
 
+#Int -> [Str] -> Int -> (Dict_QuantumCircuit, Dict_OpenQASM2)
 def createInputs(num_qubits, input_types, num_inputs):
     num_inputs = floor(num_inputs / len(input_types))
     inputs = {}
@@ -67,6 +70,7 @@ def createInputs(num_qubits, input_types, num_inputs):
 
     return input_circuits, inputs
 
+#QuantumCircuit -> [Measurement_Basis] -> Str -> QuantumCircuit
 def addMeasurements(qc, base, output_type):
     new_qc = QuantumCircuit(qc.num_qubits)
     composed_qc = new_qc.compose(qc.copy())
@@ -88,6 +92,7 @@ def addMeasurements(qc, base, output_type):
 
     return composed_qc
 
+#QuantumCircuit -> Dict_QuantumCircuit -> QuantumCircuit
 def initCircuits(qc, input_circuits):
     initialized_qcs = {}
 
@@ -95,6 +100,8 @@ def initCircuits(qc, input_circuits):
         initialized_qcs[key] = value.compose(qc.copy())
 
     return initialized_qcs
+
+#QuantumCircuit -> [Str] -> Int -> [Measurement_Basis] -> Str -> (Dict_QuantumCircuit, Dict_OpenQASM2)
 def prepare_circuits(qc, input_types, num_inputs, bases, output_type):
     circuits = {}
     tests = {}
