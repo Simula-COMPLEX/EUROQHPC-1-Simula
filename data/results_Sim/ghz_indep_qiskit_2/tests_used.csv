@@ -1,13 +1,13 @@
 TestName,Input,Measurement_Base
-TestCase_0,00,X
-TestCase_1,00,Y
-TestCase_2,00,Z
-TestCase_3,01,X
-TestCase_4,01,Y
-TestCase_5,01,Z
-TestCase_6,"OPENQASM 2.0;\ninclude ""qelib1.inc"";\nqreg q[2];\ncx q[1],q[0];\nsx q[0];\nz q[1];",X
-TestCase_7,"OPENQASM 2.0;\ninclude ""qelib1.inc"";\nqreg q[2];\ncx q[1],q[0];\nsx q[0];\nz q[1];",Y
-TestCase_8,"OPENQASM 2.0;\ninclude ""qelib1.inc"";\nqreg q[2];\ncx q[1],q[0];\nsx q[0];\nz q[1];",Z
-TestCase_9,"OPENQASM 2.0;\ninclude ""qelib1.inc"";\ngate csdg q0,q1 { p(-pi/4) q0; cx q0,q1; p(pi/4) q1; cx q0,q1; p(-pi/4) q1; }\nqreg q[2];\ncsdg q[0],q[1];\ncu3(0.2892410842432829,1.662680040428406,1.9051171887809741) q[1],q[0];",X
-TestCase_10,"OPENQASM 2.0;\ninclude ""qelib1.inc"";\ngate csdg q0,q1 { p(-pi/4) q0; cx q0,q1; p(pi/4) q1; cx q0,q1; p(-pi/4) q1; }\nqreg q[2];\ncsdg q[0],q[1];\ncu3(0.2892410842432829,1.662680040428406,1.9051171887809741) q[1],q[0];",Y
-TestCase_11,"OPENQASM 2.0;\ninclude ""qelib1.inc"";\ngate csdg q0,q1 { p(-pi/4) q0; cx q0,q1; p(pi/4) q1; cx q0,q1; p(-pi/4) q1; }\nqreg q[2];\ncsdg q[0],q[1];\ncu3(0.2892410842432829,1.662680040428406,1.9051171887809741) q[1],q[0];",Z
+TestCase_0,11,X
+TestCase_1,11,Y
+TestCase_2,11,Z
+TestCase_3,00,X
+TestCase_4,00,Y
+TestCase_5,00,Z
+TestCase_6,"OPENQASM 2.0;\ninclude ""qelib1.inc"";\ngate ryy(param0) q0,q1 { rx(pi/2) q0; rx(pi/2) q1; cx q0,q1; rz(param0) q1; cx q0,q1; rx(-pi/2) q0; rx(-pi/2) q1; }\nqreg q[2];\ncx q[1],q[0];\nryy(1.3659154956996695) q[0],q[1];",X
+TestCase_7,"OPENQASM 2.0;\ninclude ""qelib1.inc"";\ngate ryy(param0) q0,q1 { rx(pi/2) q0; rx(pi/2) q1; cx q0,q1; rz(param0) q1; cx q0,q1; rx(-pi/2) q0; rx(-pi/2) q1; }\nqreg q[2];\ncx q[1],q[0];\nryy(1.3659154956996695) q[0],q[1];",Y
+TestCase_8,"OPENQASM 2.0;\ninclude ""qelib1.inc"";\ngate ryy(param0) q0,q1 { rx(pi/2) q0; rx(pi/2) q1; cx q0,q1; rz(param0) q1; cx q0,q1; rx(-pi/2) q0; rx(-pi/2) q1; }\nqreg q[2];\ncx q[1],q[0];\nryy(1.3659154956996695) q[0],q[1];",Z
+TestCase_9,"OPENQASM 2.0;\ninclude ""qelib1.inc"";\ngate iswap q0,q1 { s q0; s q1; h q0; cx q0,q1; cx q1,q0; h q1; }\nqreg q[2];\niswap q[1],q[0];\ns q[0];",X
+TestCase_10,"OPENQASM 2.0;\ninclude ""qelib1.inc"";\ngate iswap q0,q1 { s q0; s q1; h q0; cx q0,q1; cx q1,q0; h q1; }\nqreg q[2];\niswap q[1],q[0];\ns q[0];",Y
+TestCase_11,"OPENQASM 2.0;\ninclude ""qelib1.inc"";\ngate iswap q0,q1 { s q0; s q1; h q0; cx q0,q1; cx q1,q0; h q1; }\nqreg q[2];\niswap q[1],q[0];\ns q[0];",Z

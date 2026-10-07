@@ -17,10 +17,10 @@
     "RESOURCE": "RESOURCE id",
 
     "QOPS":{
-	"cps_path": "./data/cps",
-	"budget": 100,
-	"mode": "batch",
-	"batch": 10,
-	"threshold": 0.1
+        "cps_path": "./data/cps",
+        "budget": 100,
+        "mode": "batch",
+        "batch": 10,
+        "threshold": 0.1
     }
 }

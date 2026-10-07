@@ -121,7 +121,8 @@ def start(exec_qops):
                                 output=str(path_result)
                             )
                             result = ct.run_randomsearch()
-                            print(result["Max Diff"], result["Max Diff. Test Case"])
+                            print(result["Max Diff"])
+                            print(result["Max Diff. Test Case"])
                             break
                             
     else:    
