@@ -5,9 +5,9 @@ TestCase_2,0,Z
 TestCase_3,1,X
 TestCase_4,1,Y
 TestCase_5,1,Z
-TestCase_6,"OPENQASM 2.0;\ninclude ""qelib1.inc"";\nqreg q[1];\nh q[0];\nx q[0];",X
-TestCase_7,"OPENQASM 2.0;\ninclude ""qelib1.inc"";\nqreg q[1];\nh q[0];\nx q[0];",Y
-TestCase_8,"OPENQASM 2.0;\ninclude ""qelib1.inc"";\nqreg q[1];\nh q[0];\nx q[0];",Z
-TestCase_9,"OPENQASM 2.0;\ninclude ""qelib1.inc"";\nqreg q[1];\ny q[0];\nt q[0];",X
-TestCase_10,"OPENQASM 2.0;\ninclude ""qelib1.inc"";\nqreg q[1];\ny q[0];\nt q[0];",Y
-TestCase_11,"OPENQASM 2.0;\ninclude ""qelib1.inc"";\nqreg q[1];\ny q[0];\nt q[0];",Z
+TestCase_6,"OPENQASM 2.0;\ninclude ""qelib1.inc"";\nqreg q[1];\nrx(4.589702219883123) q[0];\nh q[0];",X
+TestCase_7,"OPENQASM 2.0;\ninclude ""qelib1.inc"";\nqreg q[1];\nrx(4.589702219883123) q[0];\nh q[0];",Y
+TestCase_8,"OPENQASM 2.0;\ninclude ""qelib1.inc"";\nqreg q[1];\nrx(4.589702219883123) q[0];\nh q[0];",Z
+TestCase_9,"OPENQASM 2.0;\ninclude ""qelib1.inc"";\nqreg q[1];\nsx q[0];\nu1(4.559536801030455) q[0];",X
+TestCase_10,"OPENQASM 2.0;\ninclude ""qelib1.inc"";\nqreg q[1];\nsx q[0];\nu1(4.559536801030455) q[0];",Y
+TestCase_11,"OPENQASM 2.0;\ninclude ""qelib1.inc"";\nqreg q[1];\nsx q[0];\nu1(4.559536801030455) q[0];",Z

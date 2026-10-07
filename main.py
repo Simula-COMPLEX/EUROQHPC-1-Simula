@@ -4,7 +4,6 @@ import pandas as pd
 import pathlib
 import json
 
-import qiskit
 from qiskit import QuantumCircuit, qasm2
 from tqdm import tqdm
 
@@ -66,16 +65,16 @@ def save_results(results, tests, results_path, environment, origin_file):
 
 
 def start(exec_qops):
-    if exec_qops:
-        with open("config.json", "r") as f:
-            config = json.load(f)
+    with open("config.json", "r") as f:
+        config = json.load(f, object_hook=lambda d: SimpleNamespace(**d))
 
-            if config["environment"] == "VLQ":
+    if exec_qops:
+            if config.environment == "VLQ":
                 print("Not supported yet")
 
             else:
-                path = pathlib.Path(config["origin_path"]) #path of the examples
-                path_cps = pathlib.Path(config["QOPS"]["cps_path"]) #path for the cps files
+                path = pathlib.Path(config.origin_path) #path of the examples
+                path_cps = pathlib.Path(config.QOPS.cps_path) #path for the cps files
 
                 files_examples = []
                 files_cps = []
@@ -102,11 +101,11 @@ def start(exec_qops):
                     for f_cps in files_cps:
                         if f_ex.stem == f_cps.stem:
                             print(f"({f_ex.name}, {f_cps.name})")
-                            cut = qasm2.load(f_ex)
+                            cut = qasm2.load(f_ex) #circuit without measurements
                             with open(str(f_cps), "r") as f:
                                 cps = json.load(f) 
                             executor = Qiskit_Executor()
-                            path_folder_result = pathlib.Path(config["results_path"]+"_QOPS")
+                            path_folder_result = pathlib.Path(config.results_path + "_QOPS")
                             path_folder_result.mkdir(parents=True, exist_ok=True)
                             path_result = pathlib.Path(path_folder_result,str(f_ex.stem)+".json")
                             print(path_result)
@@ -114,10 +113,10 @@ def start(exec_qops):
                                 CUT=cut,
                                 CPS=cps,
                                 executor=executor,
-                                threshold=config["QOPS"]["threshold"],
-                                budget=config["QOPS"]["budget"],
-                                mode=config["QOPS"]["mode"],
-                                batch=config["QOPS"]["batch"],
+                                threshold=config.QOPS.threshold,
+                                budget=config.QOPS.budget,
+                                mode=config.QOPS.mode,
+                                batch=config.QOPS.batch,
                                 output=str(path_result)
                             )
                             result = ct.run_randomsearch()
@@ -126,9 +125,6 @@ def start(exec_qops):
                             break
                             
     else:    
-        with open("config.json", "r") as f:
-            config = json.load(f, object_hook=lambda d: SimpleNamespace(**d))
-
         if config.environment == 'VLQ':
             config.output_type = 'Prob'
             # Authentication
@@ -190,12 +186,10 @@ def start(exec_qops):
 if __name__ == '__main__':
     path_char = '/'
 
-    print(f"Qiskit version: {qiskit.__version__}\n")
-
     parser = argparse.ArgumentParser(
         description=(
             "Test\n"
-            "Run Enaut: python main.py"
+            "Run Enaut framework: python main.py"
             "Run QOPS: python main.py -q"
         ),
         formatter_class=argparse.RawDescriptionHelpFormatter
