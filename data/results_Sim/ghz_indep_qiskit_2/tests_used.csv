@@ -1,13 +1,7 @@
 TestName,Input,Measurement_Base
-TestCase_0,01,X
-TestCase_1,01,Y
-TestCase_2,01,Z
-TestCase_3,10,X
-TestCase_4,10,Y
-TestCase_5,10,Z
-TestCase_6,"OPENQASM 2.0;\ninclude ""qelib1.inc"";\nqreg q[2];\ncp(1.0869035957863993) q[0],q[1];\ncu3(5.841034324581742,3.549999766944566,6.133250400049316) q[0],q[1];",X
-TestCase_7,"OPENQASM 2.0;\ninclude ""qelib1.inc"";\nqreg q[2];\ncp(1.0869035957863993) q[0],q[1];\ncu3(5.841034324581742,3.549999766944566,6.133250400049316) q[0],q[1];",Y
-TestCase_8,"OPENQASM 2.0;\ninclude ""qelib1.inc"";\nqreg q[2];\ncp(1.0869035957863993) q[0],q[1];\ncu3(5.841034324581742,3.549999766944566,6.133250400049316) q[0],q[1];",Z
-TestCase_9,"OPENQASM 2.0;\ninclude ""qelib1.inc"";\ngate iswap q0,q1 { s q0; s q1; h q0; cx q0,q1; cx q1,q0; h q1; }\nqreg q[2];\ncu1(2.4312560762229776) q[1],q[0];\niswap q[1],q[0];",X
-TestCase_10,"OPENQASM 2.0;\ninclude ""qelib1.inc"";\ngate iswap q0,q1 { s q0; s q1; h q0; cx q0,q1; cx q1,q0; h q1; }\nqreg q[2];\ncu1(2.4312560762229776) q[1],q[0];\niswap q[1],q[0];",Y
-TestCase_11,"OPENQASM 2.0;\ninclude ""qelib1.inc"";\ngate iswap q0,q1 { s q0; s q1; h q0; cx q0,q1; cx q1,q0; h q1; }\nqreg q[2];\ncu1(2.4312560762229776) q[1],q[0];\niswap q[1],q[0];",Z
+TestCase_0,11,X
+TestCase_1,11,Y
+TestCase_2,11,Z
+TestCase_3,"OPENQASM 2.0;\ninclude ""qelib1.inc"";\ngate r(param0,param1) q0 { u3(param0,param1 - pi/2,pi/2 - param1) q0; }\nqreg q[2];\np(6.221097385163584) q[1];\nr(0.9434880741654149,3.964868784183313) q[0];\nz q[1];",X
+TestCase_4,"OPENQASM 2.0;\ninclude ""qelib1.inc"";\ngate r(param0,param1) q0 { u3(param0,param1 - pi/2,pi/2 - param1) q0; }\nqreg q[2];\np(6.221097385163584) q[1];\nr(0.9434880741654149,3.964868784183313) q[0];\nz q[1];",Y
+TestCase_5,"OPENQASM 2.0;\ninclude ""qelib1.inc"";\ngate r(param0,param1) q0 { u3(param0,param1 - pi/2,pi/2 - param1) q0; }\nqreg q[2];\np(6.221097385163584) q[1];\nr(0.9434880741654149,3.964868784183313) q[0];\nz q[1];",Z

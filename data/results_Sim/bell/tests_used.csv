@@ -1,13 +1,7 @@
 TestName,Input,Measurement_Base
-TestCase_0,01,X
-TestCase_1,01,Y
-TestCase_2,01,Z
-TestCase_3,10,X
-TestCase_4,10,Y
-TestCase_5,10,Z
-TestCase_6,"OPENQASM 2.0;\ninclude ""qelib1.inc"";\nqreg q[2];\nid q[0];\nt q[1];\np(0.34940515946873074) q[1];\nu(3.8473638486205477,2.687412613929156,0.882733571929073) q[0];",X
-TestCase_7,"OPENQASM 2.0;\ninclude ""qelib1.inc"";\nqreg q[2];\nid q[0];\nt q[1];\np(0.34940515946873074) q[1];\nu(3.8473638486205477,2.687412613929156,0.882733571929073) q[0];",Y
-TestCase_8,"OPENQASM 2.0;\ninclude ""qelib1.inc"";\nqreg q[2];\nid q[0];\nt q[1];\np(0.34940515946873074) q[1];\nu(3.8473638486205477,2.687412613929156,0.882733571929073) q[0];",Z
-TestCase_9,"OPENQASM 2.0;\ninclude ""qelib1.inc"";\nqreg q[2];\ncrz(0.32479493165155254) q[0],q[1];\ny q[0];\ntdg q[1];",X
-TestCase_10,"OPENQASM 2.0;\ninclude ""qelib1.inc"";\nqreg q[2];\ncrz(0.32479493165155254) q[0],q[1];\ny q[0];\ntdg q[1];",Y
-TestCase_11,"OPENQASM 2.0;\ninclude ""qelib1.inc"";\nqreg q[2];\ncrz(0.32479493165155254) q[0],q[1];\ny q[0];\ntdg q[1];",Z
+TestCase_0,11,X
+TestCase_1,11,Y
+TestCase_2,11,Z
+TestCase_3,"OPENQASM 2.0;\ninclude ""qelib1.inc"";\nqreg q[2];\nid q[0];\nz q[1];\nrzz(3.9365904271207985) q[1],q[0];",X
+TestCase_4,"OPENQASM 2.0;\ninclude ""qelib1.inc"";\nqreg q[2];\nid q[0];\nz q[1];\nrzz(3.9365904271207985) q[1],q[0];",Y
+TestCase_5,"OPENQASM 2.0;\ninclude ""qelib1.inc"";\nqreg q[2];\nid q[0];\nz q[1];\nrzz(3.9365904271207985) q[1],q[0];",Z

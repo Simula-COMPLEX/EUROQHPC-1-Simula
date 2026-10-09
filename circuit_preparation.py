@@ -39,7 +39,6 @@ def circuitinitialization_classic(numqubits, input):
 def circuitinitialization_quantum(numqubits):
     qc = QuantumCircuit(numqubits)
 
-
     return qc
 
 #Int -> [Str] -> Int -> (Dict_QuantumCircuit, Dict_OpenQASM2)
@@ -92,7 +91,7 @@ def addMeasurements(qc, base, output_type):
 
     return composed_qc
 
-#QuantumCircuit -> Dict_QuantumCircuit -> QuantumCircuit
+#QuantumCircuit -> Dict_QuantumCircuit -> dict
 def initCircuits(qc, input_circuits):
     initialized_qcs = {}
 

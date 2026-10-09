@@ -1,6 +1,7 @@
 {
+    "language": "Qiskit",
     "input_types": ["C", "Q"],
-    "num_inputs": 4,
+    "num_inputs": 2,
     "measurements": ["X", "Y", "Z"],
 
     "output_type": "Prob",
