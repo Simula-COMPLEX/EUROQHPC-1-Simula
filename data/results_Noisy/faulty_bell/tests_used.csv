@@ -1,0 +1,7 @@
+TestName,Input,Measurement_Base
+TestCase_0,01,X
+TestCase_1,01,Y
+TestCase_2,01,Z
+TestCase_3,"OPENQASM 2.0;\ninclude ""qelib1.inc"";\nqreg q[2];\nt q[1];\np(0.7490151651157987) q[0];\nh q[0];\nu1(5.317892515559197) q[1];",X
+TestCase_4,"OPENQASM 2.0;\ninclude ""qelib1.inc"";\nqreg q[2];\nt q[1];\np(0.7490151651157987) q[0];\nh q[0];\nu1(5.317892515559197) q[1];",Y
+TestCase_5,"OPENQASM 2.0;\ninclude ""qelib1.inc"";\nqreg q[2];\nt q[1];\np(0.7490151651157987) q[0];\nh q[0];\nu1(5.317892515559197) q[1];",Z

@@ -3,7 +3,8 @@ from gen_random_input import Gen_Random_Input
 from qiskit import QuantumCircuit, qasm2, transpile
 from qiskit_aer import AerSimulator
 from qiskit.quantum_info import SparsePauliOp
-from qiskit.primitives import StatevectorEstimator
+from qiskit.primitives import StatevectorEstimator, BackendEstimatorV2
+from qiskit.transpiler import generate_preset_pass_manager
 
 #imports to run in VLQ
 from qaas.client import QProvider, QBackend, QJob
@@ -11,6 +12,8 @@ from iqm.qiskit_iqm import  transpile_to_IQM
 from py4lexis.session import LexisSession
 
 from Languages.abstract_lang import Language
+
+from qiskit_ibm_runtime.fake_provider import FakePerth
 
 class qiskit_lang(Language):
     def __init__(
@@ -64,7 +67,10 @@ class qiskit_lang(Language):
                 meas_qc.h(q)
 
         if self.output_type=="State":
-            meas_qc.save_statevector()
+            if self.environment=="Sim":
+                meas_qc.save_statevector()  
+            elif self.environment=="Noisy":
+                pass
         if self.output_type=="Prob":
             meas_qc.measure_all()
 
@@ -112,6 +118,40 @@ class qiskit_lang(Language):
                 transpiled_circuits = transpile(list(circuits.values()), backend)
                 results = backend.run(transpiled_circuits, shots=self.shots, seed_simulator=42).result()
 
+        elif self.environment == "Noisy":
+            backend = FakePerth() #change backend here
+            noise_sim = AerSimulator.from_backend(backend=backend)
+            pm = generate_preset_pass_manager(
+                optimization_level=0,
+                backend=backend,
+                seed_transpiler=42
+            )
+            results = {}
+            if self.output_type == "Exp":
+                #results = {}
+                estimator = BackendEstimatorV2(backend=noise_sim)
+                for tc_name, circuit in circuits.items():
+                    obs = SparsePauliOp("Z"*circuit.num_qubits)
+                    transpiled_qc = pm.run(circuit) #gives the transpiled circuit
+                    transpiled_obs = obs.apply_layout(transpiled_qc.layout)
+
+                    pub = (transpiled_qc, transpiled_obs)
+                    job = estimator.run([pub])
+                    result = job.result()[0].data.evs
+
+                    results[tc_name] = float(result)
+            
+            else:
+                noise_sim.set_options(method="density_matrix")
+                #transpile the circuits
+                print(f"--------------({self.output_type}, {self.environment})---------")
+                transpiled_circuits = pm.run(list(circuits.values()))
+                #save the density matrices
+                for qc in transpiled_circuits:
+                    qc.save_density_matrix()
+                results = noise_sim.run(transpiled_circuits, shots=self.shots).result()
+
+
         elif self.environment == 'VLQ':
             results = {}
 
@@ -129,6 +169,9 @@ class qiskit_lang(Language):
                 transpiled_circuit = transpile_to_IQM(circuit, backend)
                 results[name] = backend.run(transpiled_circuit, shots=self.shots).result().get_counts()
 
+        
+
+        
         return results
 
     #---Get outputs---
@@ -136,11 +179,15 @@ class qiskit_lang(Language):
     def get_outputs(self, circuits, outputs):
         results = {}
         if self.output_type == 'State':
-            for key, value in circuits.items():
-                results[key] = outputs.get_statevector(value).data
+            if self.environment == "Sim":
+                for key, value in circuits.items():
+                    results[key] = outputs.get_statevector(value).data
+            elif self.environment == "Noisy":  
+                print("get_outputs: State -> Noisy")
+                for key, value in circuits.items():
+                    results[key] = outputs.data(value)["density_matrix"]
         elif self.output_type == 'Exp':
             results = outputs
-
         else:
             for key, value in circuits.items():
                 results[key] = outputs.get_counts(value)

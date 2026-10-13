@@ -1,7 +1,7 @@
 TestCase,Result
-TestCase_0,{'0': 1024}
-TestCase_1,"{'1': 487, '0': 537}"
-TestCase_2,"{'0': 512, '1': 512}"
-TestCase_3,"{'1': 117, '0': 907}"
-TestCase_4,"{'1': 464, '0': 560}"
-TestCase_5,"{'0': 216, '1': 808}"
+TestCase_0,-0.9999999999999996
+TestCase_1,0.0
+TestCase_2,0.0
+TestCase_3,0.0
+TestCase_4,0.9999999999999996
+TestCase_5,0.0

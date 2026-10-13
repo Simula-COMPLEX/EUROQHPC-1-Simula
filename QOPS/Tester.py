@@ -103,6 +103,7 @@ class Circuit_Tester:
 
 
     def run_randomsearch(self):
+        print(self.output)
         if self.mode == 'single':
             record = {"Max Diff":0, "Max Diff. Test Case": {}, "history":[]}
             for i in range(self.budget):
@@ -121,8 +122,10 @@ class Circuit_Tester:
                         return record
             print("max budget reached")
             if self.output:
+                print("ola single")
                 with open(self.output, "w") as f:
                     json.dump(record,f)
+                    print(f"The otuput was saved in {self.output}")
             return record
 
         else:
@@ -157,6 +160,8 @@ class Circuit_Tester:
                 total_run += this_batch_size
             print("max budget reached")
             if self.output:
+                print("ola batch")
                 with open(self.output, "w") as f:
                     json.dump(record,f)
+                    print(f"The otuput was saved in {self.output}")
             return record

@@ -1,7 +1,7 @@
 TestName,Input,Measurement_Base
-TestCase_0,01,X
-TestCase_1,01,Y
-TestCase_2,01,Z
-TestCase_3,"OPENQASM 2.0;\ninclude ""qelib1.inc"";\ngate xx_plus_yy(param0,param1) q0,q1 { rz(param1) q0; rz(-pi/2) q1; sx q1; rz(pi/2) q1; s q0; cx q1,q0; ry(-param0/2) q1; ry(-param0/2) q0; cx q1,q0; sdg q0; rz(-pi/2) q1; sxdg q1; rz(pi/2) q1; rz(-param1) q0; }\nqreg q[2];\nt q[0];\nu(1.7092280812058709,4.63037806028957,5.397543376061356) q[1];\nxx_plus_yy(0.2522884343497871,3.419149670741775) q[1],q[0];",X
-TestCase_4,"OPENQASM 2.0;\ninclude ""qelib1.inc"";\ngate xx_plus_yy(param0,param1) q0,q1 { rz(param1) q0; rz(-pi/2) q1; sx q1; rz(pi/2) q1; s q0; cx q1,q0; ry(-param0/2) q1; ry(-param0/2) q0; cx q1,q0; sdg q0; rz(-pi/2) q1; sxdg q1; rz(pi/2) q1; rz(-param1) q0; }\nqreg q[2];\nt q[0];\nu(1.7092280812058709,4.63037806028957,5.397543376061356) q[1];\nxx_plus_yy(0.2522884343497871,3.419149670741775) q[1],q[0];",Y
-TestCase_5,"OPENQASM 2.0;\ninclude ""qelib1.inc"";\ngate xx_plus_yy(param0,param1) q0,q1 { rz(param1) q0; rz(-pi/2) q1; sx q1; rz(pi/2) q1; s q0; cx q1,q0; ry(-param0/2) q1; ry(-param0/2) q0; cx q1,q0; sdg q0; rz(-pi/2) q1; sxdg q1; rz(pi/2) q1; rz(-param1) q0; }\nqreg q[2];\nt q[0];\nu(1.7092280812058709,4.63037806028957,5.397543376061356) q[1];\nxx_plus_yy(0.2522884343497871,3.419149670741775) q[1],q[0];",Z
+TestCase_0,11,X
+TestCase_1,11,Y
+TestCase_2,11,Z
+TestCase_3,"OPENQASM 2.0;\ninclude ""qelib1.inc"";\nqreg q[2];\ncrx(0.00992907410848002) q[0],q[1];\nz q[1];\nh q[0];",X
+TestCase_4,"OPENQASM 2.0;\ninclude ""qelib1.inc"";\nqreg q[2];\ncrx(0.00992907410848002) q[0],q[1];\nz q[1];\nh q[0];",Y
+TestCase_5,"OPENQASM 2.0;\ninclude ""qelib1.inc"";\nqreg q[2];\ncrx(0.00992907410848002) q[0],q[1];\nz q[1];\nh q[0];",Z
