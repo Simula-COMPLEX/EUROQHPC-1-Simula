@@ -39,6 +39,7 @@ def circuitinitialization_classic(numqubits, input):
 def circuitinitialization_quantum(numqubits):
     qc = QuantumCircuit(numqubits)
 
+
     return qc
 
 #Int -> [Str] -> Int -> (Dict_QuantumCircuit, Dict_OpenQASM2)
@@ -70,7 +71,7 @@ def createInputs(num_qubits, input_types, num_inputs):
     return input_circuits, inputs
 
 #QuantumCircuit -> [Measurement_Basis] -> Str -> QuantumCircuit
-def addMeasurements(qc, base, output_type):
+def addMeasurements(qc, base, output_type, environment):
     new_qc = QuantumCircuit(qc.num_qubits)
     composed_qc = new_qc.compose(qc.copy())
 
@@ -85,13 +86,14 @@ def addMeasurements(qc, base, output_type):
             composed_qc.h(qubit)
 
     if output_type == "State":
-        composed_qc.save_statevector()
+        if environment == "Sim":
+            composed_qc.save_statevector()
     if output_type == "Prob":
         composed_qc.measure_all()
 
     return composed_qc
 
-#QuantumCircuit -> Dict_QuantumCircuit -> dict
+#QuantumCircuit -> Dict_QuantumCircuit -> QuantumCircuit
 def initCircuits(qc, input_circuits):
     initialized_qcs = {}
 
@@ -101,7 +103,7 @@ def initCircuits(qc, input_circuits):
     return initialized_qcs
 
 #QuantumCircuit -> [Str] -> Int -> [Measurement_Basis] -> Str -> (Dict_QuantumCircuit, Dict_OpenQASM2)
-def prepare_circuits(qc, input_types, num_inputs, bases, output_type):
+def prepare_circuits(qc, input_types, num_inputs, bases, output_type, environment):
     circuits = {}
     tests = {}
     qc.remove_final_measurements()
@@ -112,7 +114,7 @@ def prepare_circuits(qc, input_types, num_inputs, bases, output_type):
     test_count = 0
     for input_name, circ in initialized_circuits.items():
         for base in bases:
-            circuits["TestCase_" + str(test_count)] = addMeasurements(circ, base, output_type)
+            circuits["TestCase_" + str(test_count)] = addMeasurements(circ, base, output_type, environment)
             tests["TestCase_" + str(test_count)] = inputs[input_name] + '_Base_' + base
             test_count = test_count + 1
 

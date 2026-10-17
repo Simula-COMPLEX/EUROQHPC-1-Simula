@@ -1,7 +1,13 @@
 TestCase,Result
-TestCase_0,-0.9999999999999996
-TestCase_1,0.0
-TestCase_2,0.0
-TestCase_3,0.0
-TestCase_4,0.9999999999999996
-TestCase_5,0.0
+TestCase_0,{'0': 1024}
+TestCase_1,"{'1': 487, '0': 537}"
+TestCase_2,"{'0': 512, '1': 512}"
+TestCase_3,{'1': 1024}
+TestCase_4,"{'1': 521, '0': 503}"
+TestCase_5,"{'1': 486, '0': 538}"
+TestCase_6,"{'1': 81, '0': 943}"
+TestCase_7,"{'0': 398, '1': 626}"
+TestCase_8,"{'1': 228, '0': 796}"
+TestCase_9,{'0': 1024}
+TestCase_10,"{'0': 518, '1': 506}"
+TestCase_11,"{'0': 520, '1': 504}"

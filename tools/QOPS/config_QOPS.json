@@ -1,0 +1,9 @@
+{
+    "qasmfile": "./tools/QOPS/testcircuit.qasm",
+    "cpsfile": "./tools/QOPS/testcps.json",
+    "budget": 100,
+    "mode": "single",
+    "batch": 10,
+    "threshold": 0.1,
+    "output": "./tools/QOPS/report.json"
+}

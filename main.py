@@ -4,7 +4,11 @@ import pandas as pd
 import pathlib
 import json
 
-from qiskit import QuantumCircuit, qasm2
+import argparse
+
+import qiskit
+from qiskit import QuantumCircuit, qasm3
+from qiskit.quantum_info import Statevector, DensityMatrix
 from tqdm import tqdm
 
 from circuit_preparation import prepare_circuits
@@ -12,51 +16,39 @@ from circuit_execution import execute_circuits, get_outputs
 
 from py4lexis.session import LexisSession
 
-import argparse
 from QOPS.Tester import Circuit_Tester
 from QOPS.QiskitExecutor import Qiskit_Executor
-from QOPS.SimpleStatevectorExecutor import SimpleStatevectorExecutor
-#from QOPS.VLQExecutor import VLQ_Executor #to do 
-
-from qiskit.quantum_info import Statevector, DensityMatrix
-
-from Languages.select_lang import get_language
 
 #pretty printing of quantum states
 def from_state_vector_to_dirac(statevector):
+    tol = 1e-10
     sv = Statevector(statevector)
-    print(sv.draw(output="text"))
-
-def from_density_matrix_to_dirac(density_matrix):
-    tol=1e-10
-    rho = DensityMatrix(density_matrix)
-    matrix = rho.data
-
-    num_qubits = rho.num_qubits
+    vector = sv.data
+    
+    num_qubits = sv.num_qubits
     terms = []
-
+    
     for i in range(2**num_qubits):
-        for j in range(2**num_qubits):
-            coefficient = matrix[i, j]
-
+            coefficient = vector[i]
+    
             if abs(coefficient) < tol:
                 continue
-
+    
             ket = format(i, f"0{num_qubits}b")
-            bra = format(j, f"0{num_qubits}b")
-
+    
             terms.append(
-                f" ({coefficient:.4g})|{ket}⟩⟨{bra}|"
+                f" ({coefficient:.4g})|{ket}⟩"
             )
+    
+    print(" + ".join(terms) if terms else "0")
 
-    print(" +\n".join(terms) if terms else "0")
 
 #QuantumCircuit -> [Str] -> Int -> [Measurement_Basis] -> Str -> Int -> Str -> Str -> Str -> Str -> (Dict_Results, Dict_OpenQASM2)
 def run(origin_qc, input_types,num_inputs, measurements, output_type, shots, environment, token, project, resource):
 
-    circuits, tests = prepare_circuits(origin_qc, input_types, num_inputs, measurements, output_type)
+    circuits, tests = prepare_circuits(origin_qc, input_types, num_inputs, measurements, output_type, environment)
     outputs = execute_circuits(circuits, shots, environment, output_type, token, project, resource)
-    if environment == 'Sim':
+    if environment == 'Sim' or environment == 'Noisy':
         results = get_outputs(circuits, outputs, output_type)
     else:
         results = outputs
@@ -99,67 +91,35 @@ def save_results(results, tests, results_path, environment, origin_file):
     df_tests.to_csv(f"{results_path}{path_char}{origin_file_name}{path_char}tests_used.csv", index=False)     
 
 
-def start(exec_qops):
-    with open("config.json", "r") as f:
-        config = json.load(f, object_hook=lambda d: SimpleNamespace(**d))
+def start(args_qops):
+    if args_qops.qops:
+        config_qops_path = pathlib.Path("./tools/QOPS/config_QOPS.json")
+        
+        with open(config_qops_path, "r") as f:
+            config_qops = json.load(f)
 
-    if exec_qops:
-            if config.environment == "VLQ":
-                print("Not supported yet")
+        cut = qasm3.load(config_qops["qasmfile"])
+        with open(config_qops["cpsfile"], "r") as f:
+            cps = json.load(f)
 
-            else:
-                path = pathlib.Path(config.origin_path) #path of the examples
-                path_cps = pathlib.Path(args_qops.cps_path) #path for the cps files
+        executor = Qiskit_Executor()
+        ct = Circuit_Tester(
+            CUT=cut,
+            CPS=cps,
+            executor=executor,
+            threshold=0.05,
+            budget=50,
+            mode='single',
+            output=config_qops["output"]
+        )
 
-                files_examples = []
-                files_cps = []
-                if path.is_file():
-                    if path.file_extension == ".qasm":
-                        files_examples.append(path)
-                elif path.is_dir():
-                    for file in path.glob("*.qasm"):
-                        files_examples.append(file)
-                else:
-                    print("ERROR: Path does not exist or no .qasm file was found.")
+        result = ct.run_randomsearch()
+        print(result["Max Diff"], result["Max Diff. Test Case"])
+        
+    else:  
+        with open("config.json", "r") as f:
+            config = json.load(f, object_hook=lambda d: SimpleNamespace(**d))
 
-                if path_cps.is_file():
-                    if path_cps.file_extension == ".json":
-                        files_cps.append(path_cps)
-                elif path_cps.is_dir():
-                    for file in path_cps.glob("*.json"):
-                        files_cps.append(file)
-
-                else:
-                    print("ERROR: Path does not exist or no .json file was found.")
-
-                for f_ex in files_examples:
-                    for f_cps in files_cps:
-                        if f_ex.stem == f_cps.stem:
-                            print(f"({f_ex.name}, {f_cps.name})")
-                            cut = qasm2.load(f_ex) #circuit without measurements
-                            with open(str(f_cps), "r") as f:
-                                cps = json.load(f) 
-                            executor = Qiskit_Executor() #if config.environment=="Sim" else VLQ_Executor()
-                            path_folder_result = pathlib.Path(config.results_path + "_QOPS")
-                            path_folder_result.mkdir(parents=True, exist_ok=True)
-                            path_result = pathlib.Path(path_folder_result,str(f_ex.stem)+".json")
-                            print(path_result)
-                            ct = Circuit_Tester(
-                                CUT=cut,
-                                CPS=cps,
-                                executor=executor,
-                                threshold=args_qops.threshold,
-                                budget=args_qops.budget,
-                                mode=args_qops.mode,
-                                batch=args_qops.batch,
-                                output=str(path_result)
-                            )
-                            result = ct.run_randomsearch()
-                            print(result["Max Diff"])
-                            print(result["Max Diff. Test Case"])
-                            break
-                            
-    else:    
         if config.environment == 'VLQ':
             config.output_type = 'Prob'
             # Authentication
@@ -167,174 +127,70 @@ def start(exec_qops):
             token = lexis_session.get_access_token()
         else:
             token = None
-            path = pathlib.Path(config.origin_path)
-            files = []
-            if path.is_file():
-                # Process the single file
-                if path.file_extension == ".qasm":
-                    files.append(path)
-                    
-            elif path.is_dir():
-                # Iterate over all .qasm files in the folder
-                for file in path.glob("*.qasm"):
-                    files.append(file)
 
-            else:
-                print("ERROR: Path does not exist or no .qasm file was found.")
 
-            for origin_file in tqdm(files, desc="Executing .qasm files...."):
-                origin_qc = QuantumCircuit.from_qasm_file(origin_file)
-                if config.verbose:
-                    print("--------------------------------------------------------------------")
-                    print(f"Executing {origin_file}")
-                    print("--------------------------------------------------------------------")
-                results, tests = run(origin_qc, config.input_types, config.num_inputs, config.measurements, config.output_type, config.shots, config.environment, token, config.PROJECT, config.RESOURCE)
+        path = pathlib.Path(config.origin_path)
 
-                if config.verbose:
-                    print("--------------------------------------------------------------------")
-                    print(f"TC used in execution:")
+
+        files = []
+        if path.is_file():
+            # Process the single file
+            if path.suffix == ".qasm":
+                files.append(path)
+
+        elif path.is_dir():
+            # Iterate over all .qasm files in the folder
+            for file in path.glob("*.qasm"):
+                files.append(file)
+
+        else:
+            print("ERROR: Path does not exist or no .qasm file was found.")
+
+        for origin_file in tqdm(files, desc="Executing .qasm files...."):
+            origin_qc = QuantumCircuit.from_qasm_file(origin_file)
+            if config.verbose:
+                print("--------------------------------------------------------------------")
+                print(f"Executing {origin_file}")
+                print("--------------------------------------------------------------------")
+            results, tests = run(origin_qc, config.input_types, config.num_inputs, config.measurements, config.output_type, config.shots, config.environment, token, config.PROJECT, config.RESOURCE)
+
+            if config.verbose:
+                print("--------------------------------------------------------------------")
+                print(f"TC used in execution:")
+                if config.output_type=="State":
                     for k,v in tests.items():
                         #what is printed here are the initial states and the measurement bases; the quantum
                         #circuit sent to evaluation is not printed
                         r = results[k]
                         print(f"\n{k}:")
                         print(v)
-                        print(f"Results obtained from execution:")
-                        print(r)
-                        print("--------------------------------------------------------------------")
                         print("\n")
-            
-                # if config.verbose:
-                #     print("--------------------------------------------------------------------")
-                #     print(f"TC used in execution:")
-                #     print(tests)
-                #     print("--------------------------------------------------------------------")
-                #     print(f"Results obtained from execution:")
-                #     print(results)
-                #     print("--------------------------------------------------------------------")
-
-                if config.save:
-                    save_results(results, tests, config.results_path, config.environment, origin_file)
-
-
-def get_files(origin_path, file_extension):
-    path = pathlib.Path(origin_path) #path of the examples
-    files=[]
-    if path.is_file():
-        if path.file_extension == file_extension:
-            files.append(path)
-    elif path.is_dir():
-        for file in path.glob("*"+file_extension):
-            files.append(file)
-    else:
-        raise ValueError (f"ERROR: Path does not exist or no {file_extension} file was found.")
-
-    return files
-
-def start3(args_qops):
-    if args_qops.qops:
-        print(args_qops)
-        print("------------")
-        cut = qasm2.load(args_qops.qasmfile)
-        if 'measure' in cut.count_ops():
-            raise ValueError (f"ERROR: The circuit {args_qops.qasmfile} has measurements; Please remove the measurements from the circuit")
-        with open(str(args_qops.cpsfile), "r") as f:
-            cps = json.load(f) 
-            ct = Circuit_Tester(
-                CUT=cut,
-                CPS=cps,
-                executor=Qiskit_Executor(), #alter this line to choose a different executor
-                threshold=args_qops.threshold,
-                budget=args_qops.budget,
-                mode=args_qops.mode,
-                batch=args_qops.batch,
-                output=args_qops.output
-            )
-            result = ct.run_randomsearch()
-            print(result["Max Diff"])
-            print(result["Max Diff. Test Case"])
-            print()
-        # for f_ex in qasm_files:
-        #     for f_cps in cps_files:
-        #         if f_ex.stem == f_cps.stem:
-        #             print(f"({f_ex.name}, {f_cps.name})")
-        #             cut = qasm2.load(f_ex) #circuit without measurements
-        #             if 'measure' in cut.count_ops():
-        #                 raise ValueError (f"ERROR: The circuit {f_ex} has measurements; Please remove the measurements from the circuit")
-        #             with open(str(f_cps), "r") as f:
-        #                 cps = json.load(f) 
-        #             executor = Qiskit_Executor() #alter this line to choose a different executor
-        #             path_folder_result = pathlib.Path(config.results_path + "_QOPS")
-        #             path_folder_result.mkdir(parents=True, exist_ok=True)
-        #             path_result = pathlib.Path(path_folder_result,str(f_ex.stem)+".json")
-        #             ct = Circuit_Tester(
-        #                 CUT=cut,
-        #                 CPS=cps,
-        #                 executor=executor,
-        #                 threshold=args_qops.threshold,
-        #                 budget=args_qops.budget,
-        #                 mode=args_qops.mode,
-        #                 batch=args_qops.batch,
-        #                 output=str(path_result)
-        #             )
-        #             result = ct.run_randomsearch()
-        #             print(result["Max Diff"])
-        #             print(result["Max Diff. Test Case"])
-        #             print()
-        #             break
-    else:
-        with open("config.json", "r") as f:
-            config = json.load(f, object_hook=lambda d: SimpleNamespace(**d))
-        
-        qasm_files = get_files(config.origin_path, ".qasm")
-
-        for qasm_file in tqdm(qasm_files, desc="Executing .qasm files...."):
-            lang = get_language(config.language, config, qasm_file)
-            circuits, tests = lang.prepare_circuits()
-            outputs = lang.execute_circuits(circuits)
-            results = lang.get_outputs(circuits, outputs)
-
-            if config.verbose:
-                if config.output_type=="State":
-                    if config.environment=="Sim":
+                        print(f"Results obtained from execution:")
+                        print(from_state_vector_to_dirac(r))
                         print("--------------------------------------------------------------------")
-                        print(f"TC used in execution:")
-                        for k,v in tests.items():
-                            #what is printed here are the initial states and the measurement bases; the quantum
-                            #circuit sent to evaluation is not printed
-                            print(f"\n{k}:")
-                            print(v)
-                            print("\n")
-                            print(f"Results obtained from execution:")
-                            from_state_vector_to_dirac(results[k])
-                            print("--------------------------------------------------------------------")
-                    elif config.environment=="Noisy":
-                        print("--------------------------------------------------------------------")
-                        print(f"TC used in execution:")
-                        for k,v in tests.items():
-                            #what is printed here are the initial states and the measurement bases; the quantum
-                            #circuit sent to evaluation is not printed
-                            print(f"\n{k}:")
-                            print(v)
-                            print("\n")
-                            print(f"Results obtained from execution:")
-                            from_density_matrix_to_dirac(results[k])
-                            print("--------------------------------------------------------------------")
-                else:
-                    print("--------------------------------------------------------------------")
-                    print(f"TC used in execution:")
+                else:   
                     for k,v in tests.items():
                         #what is printed here are the initial states and the measurement bases; the quantum
                         #circuit sent to evaluation is not printed
+                        r = results[k]
                         print(f"\n{k}:")
                         print(v)
                         print("\n")
                         print(f"Results obtained from execution:")
-                        print(results[k])
+                        print(r)
                         print("--------------------------------------------------------------------")
+            
+            # if config.verbose:
+            #     print("--------------------------------------------------------------------")
+            #     print(f"TC used in execution:")
+            #     print(tests)
+            #     print("--------------------------------------------------------------------")
+            #     print(f"Results obtained from execution:")
+            #     print(results)
+            #     print("--------------------------------------------------------------------")
 
             if config.save:
-                save_results(results, tests, config.results_path, config.environment, qasm_file)    
+                save_results(results, tests, config.results_path, config.environment, origin_file)
 
 
 
@@ -346,11 +202,6 @@ if __name__ == '__main__':
             "Test\n"
             "Run Random input circuits (Enaut): python main.py\n"
             "Run QOPS (Asmar): python main.py --qops\n"
-            "\tRun QOPS with specified parameters.\n"
-            "\tExample:\n"
-            "\t  python main.py --qops --qasmfile my_circuit.qasm "
-            "--cpsfile cps.json --threshold 0.1 --budget 10 "
-            "--mode batch --batch 5"
         ),
         formatter_class=argparse.RawDescriptionHelpFormatter
     )
@@ -362,71 +213,7 @@ if __name__ == '__main__':
         help="If enabled, QOPS is executed"
     )
 
-        # CLI arguments
-    parser.add_argument(
-        "--qasmfile", "-q",
-        type=str,
-        help="Path to the OpenQASM2 file describing the circuit-under-test without measurements."
-    )
-
-    parser.add_argument(
-        "--cpsfile", "-c",
-        type=str,
-        help="Path to the CPS JSON file containing Compact Program specification."
-    )
-
-    parser.add_argument(
-        "--threshold", "-t",
-        type=float,
-        default=None,
-        help="Threshold value for test-case evaluation (default: None)."
-    )
-
-    parser.add_argument(
-        "--budget", "-b",
-        type=int,
-        default=100,
-        help="Maximum number of test cases to run (default: 100)."
-    )
-
-    parser.add_argument(
-        "--mode", "-m",
-        type=str,
-        choices=["single", "batch"],
-        default="single",
-        help="Mode of execution: 'single' runs tests one by one; "
-             "'batch' runs tests in batches (default: single)."
-    )
-
-    parser.add_argument(
-        "--batch", "-B",
-        type=int,
-        default=5,
-        help="Batch size for batch mode (default: 5 — ignored in single mode)."
-    )
-
-    parser.add_argument(
-        "--output", "-O",
-        type=str,
-        default=None,
-        help="Output file path (default: None — if none will only print Max diff result)."
-    )
-
     args_qops = parser.parse_args()
-
-    if args_qops.qops:
-        if args_qops.qasmfile is None or args_qops.cpsfile is None:
-            parser.error("--qops requires --qasmfile and --cspfile")
-
-    # flag_qops = args_qops.qops
-    # qasmfile = args_qops.qasmfile
-    # cpsfile = args_qops.cpsfile
-    # threshold = args_qops.threshold
-    # budget = args_qops.budget
-    # mode = args_qops.mode 
-    # batch = args_qops.batch 
-    # output = args_qops.output
-
-    #start(flag_qops)
-    start3(args_qops)
+    
+    start(args_qops)
 

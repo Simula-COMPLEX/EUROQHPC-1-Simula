@@ -1,7 +1,0 @@
-TestName,Input,Measurement_Base
-TestCase_0,11,X
-TestCase_1,11,Y
-TestCase_2,11,Z
-TestCase_3,"OPENQASM 2.0;\ninclude ""qelib1.inc"";\nqreg q[2];\nx q[1];\nu1(6.0031384466804125) q[0];\nu(0.2847654179717105,2.3007449447045025,2.1727580128050414) q[1];\ntdg q[0];",X
-TestCase_4,"OPENQASM 2.0;\ninclude ""qelib1.inc"";\nqreg q[2];\nx q[1];\nu1(6.0031384466804125) q[0];\nu(0.2847654179717105,2.3007449447045025,2.1727580128050414) q[1];\ntdg q[0];",Y
-TestCase_5,"OPENQASM 2.0;\ninclude ""qelib1.inc"";\nqreg q[2];\nx q[1];\nu1(6.0031384466804125) q[0];\nu(0.2847654179717105,2.3007449447045025,2.1727580128050414) q[1];\ntdg q[0];",Z

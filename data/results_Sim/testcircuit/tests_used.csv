@@ -1,7 +1,0 @@
-TestName,Input,Measurement_Base
-TestCase_0,00100,X
-TestCase_1,00100,Y
-TestCase_2,00100,Z
-TestCase_3,"OPENQASM 2.0;\ninclude ""qelib1.inc"";\ngate ccz q0,q1,q2 { h q2; ccx q0,q1,q2; h q2; }\nqreg q[5];\nu3(1.901219949864544,5.05178409950867,0.5747971434000178) q[3];\ncswap q[2],q[1],q[4];\nry(1.7924093831768624) q[0];\nccz q[4],q[1],q[2];\ncx q[0],q[3];",X
-TestCase_4,"OPENQASM 2.0;\ninclude ""qelib1.inc"";\ngate ccz q0,q1,q2 { h q2; ccx q0,q1,q2; h q2; }\nqreg q[5];\nu3(1.901219949864544,5.05178409950867,0.5747971434000178) q[3];\ncswap q[2],q[1],q[4];\nry(1.7924093831768624) q[0];\nccz q[4],q[1],q[2];\ncx q[0],q[3];",Y
-TestCase_5,"OPENQASM 2.0;\ninclude ""qelib1.inc"";\ngate ccz q0,q1,q2 { h q2; ccx q0,q1,q2; h q2; }\nqreg q[5];\nu3(1.901219949864544,5.05178409950867,0.5747971434000178) q[3];\ncswap q[2],q[1],q[4];\nry(1.7924093831768624) q[0];\nccz q[4],q[1],q[2];\ncx q[0],q[3];",Z

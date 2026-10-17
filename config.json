@@ -1,27 +1,18 @@
 {
-    "language": "Qiskit",
-    "input_types": ["C", "Q"],
-    "num_inputs": 2,
-    "measurements": ["X", "Y", "Z"],
+    "input_types": ["C"],
+    "num_inputs": 1,
+    "measurements": ["Z"],
 
-    "output_type": "State",
+    "output_type": "Prob",
     "shots": 1024,
-    "environment": "Noisy",
+    "environment": "Sim",
 
     "save": true,
     "verbose": true,
 
-    "results_path": "./data/results",
-    "origin_path": "./data/example_qc",
+    "results_path": "data/results",
+    "origin_path": "data/example_qc",
 
     "PROJECT": "PROJECT id",
-    "RESOURCE": "RESOURCE id",
-
-    "QOPS":{
-        "cps_path": "./data/cps",
-        "budget": 100,
-        "mode": "batch",
-        "batch": 10,
-        "threshold": 0.1
-    }
+    "RESOURCE": "RESOURCE id"
 }

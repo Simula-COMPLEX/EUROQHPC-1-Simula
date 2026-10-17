@@ -1,7 +1,0 @@
-TestName,Input,Measurement_Base
-TestCase_0,11,X
-TestCase_1,11,Y
-TestCase_2,11,Z
-TestCase_3,"OPENQASM 2.0;\ninclude ""qelib1.inc"";\ngate cs q0,q1 { p(pi/4) q0; cx q0,q1; p(-pi/4) q1; cx q0,q1; p(pi/4) q1; }\nqreg q[2];\nsxdg q[0];\nrx(2.0099440326348006) q[1];\ncs q[1],q[0];",X
-TestCase_4,"OPENQASM 2.0;\ninclude ""qelib1.inc"";\ngate cs q0,q1 { p(pi/4) q0; cx q0,q1; p(-pi/4) q1; cx q0,q1; p(pi/4) q1; }\nqreg q[2];\nsxdg q[0];\nrx(2.0099440326348006) q[1];\ncs q[1],q[0];",Y
-TestCase_5,"OPENQASM 2.0;\ninclude ""qelib1.inc"";\ngate cs q0,q1 { p(pi/4) q0; cx q0,q1; p(-pi/4) q1; cx q0,q1; p(pi/4) q1; }\nqreg q[2];\nsxdg q[0];\nrx(2.0099440326348006) q[1];\ncs q[1],q[0];",Z
