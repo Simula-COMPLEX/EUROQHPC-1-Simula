@@ -6,8 +6,7 @@ import json
 
 import argparse
 
-import qiskit
-from qiskit import QuantumCircuit, qasm3
+from qiskit import QuantumCircuit
 from qiskit.quantum_info import Statevector, DensityMatrix
 from tqdm import tqdm
 
@@ -16,8 +15,7 @@ from circuit_execution import execute_circuits, get_outputs
 
 from py4lexis.session import LexisSession
 
-from QOPS.Tester import Circuit_Tester
-from QOPS.QiskitExecutor import Qiskit_Executor
+from tools.tools import select_tool
 
 #pretty printing of quantum states
 def from_state_vector_to_dirac(statevector):
@@ -91,30 +89,9 @@ def save_results(results, tests, results_path, environment, origin_file):
     df_tests.to_csv(f"{results_path}{path_char}{origin_file_name}{path_char}tests_used.csv", index=False)     
 
 
-def start(args_qops):
-    if args_qops.qops:
-        config_qops_path = pathlib.Path("./tools/QOPS/config_QOPS.json")
-        
-        with open(config_qops_path, "r") as f:
-            config_qops = json.load(f)
-
-        cut = qasm3.load(config_qops["qasmfile"])
-        with open(config_qops["cpsfile"], "r") as f:
-            cps = json.load(f)
-
-        executor = Qiskit_Executor()
-        ct = Circuit_Tester(
-            CUT=cut,
-            CPS=cps,
-            executor=executor,
-            threshold=0.05,
-            budget=50,
-            mode='single',
-            output=config_qops["output"]
-        )
-
-        result = ct.run_randomsearch()
-        print(result["Max Diff"], result["Max Diff. Test Case"])
+def start(cli_args):
+    if cli_args:
+        select_tool(cli_args)
         
     else:  
         with open("config.json", "r") as f:
@@ -213,7 +190,7 @@ if __name__ == '__main__':
         help="If enabled, QOPS is executed"
     )
 
-    args_qops = parser.parse_args()
+    cli_args = parser.parse_args()
     
-    start(args_qops)
+    start(cli_args)
 
